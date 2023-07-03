@@ -1,6 +1,8 @@
 const express = require("express");
 const websocket = require("ws");
 const mongoose = require("mongoose");
+const compression = require('compression')
+
 
 const env = require("./config/env");
 const app = express();
@@ -11,6 +13,8 @@ mongoose
   .then(() => {
     app.set("view engine", "ejs");
     app.use(express.static("public"));
+    app.use(compression())
+
 
     app.use('/', require('./routes/auth.route'))
 
