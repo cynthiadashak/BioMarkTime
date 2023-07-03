@@ -12,7 +12,7 @@ mongoose
     app.set("view engine", "ejs");
     app.use(express.static("public"));
 
-    // app.use("/", require("./routes/auth.route"));
+    app.use('/', require('./routes/auth.route'))
 
     app.get("*", (req, res) => {
       res.send("404 Page not found");
