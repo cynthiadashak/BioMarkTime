@@ -1,4 +1,12 @@
 :root{
     --text-color: red;
+    --bg-color-light: grey;
 }
 
+
+
+
+
+footer{
+    background-color: var(--bg-color-light);
+}

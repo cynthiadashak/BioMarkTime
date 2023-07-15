@@ -1,33 +1,47 @@
 const express = require("express");
-const websocket = require("ws");
-const mongoose = require("mongoose");
-const compression = require('compression')
+const compression = require('compression');
+const sequelize = require('./config/db');
+const flash = require('connect-flash')
+const session = require('express-session');
 
 
 const env = require("./config/env");
-const app = express();
-const http = require("http").createServer(app);
+const logger = require('./utils/logger');
 
-mongoose
-  .connect(env.DB_URI)
+const app = express();
+
+// Connect to the database
+sequelize
+  .authenticate()
   .then(() => {
+    console.log('Database connection has been established successfully.');
+
+    // Set up the app
     app.set("view engine", "ejs");
     app.use(express.static("public"));
-    app.use(compression())
-
-
-    app.use('/', require('./routes/auth.route'))
+    app.use(express.urlencoded({ extended: true }));
+    app.use(compression());
+    app.use(flash())
+    app.use(
+      session({
+        secret: 'your-secret-key',
+        resave: false,
+        saveUninitialized: false,
+      })
+    );
+    app.use('/', require('./routes/auth.route'));
+    app.use('/', require('./routes/scan.route'));
 
     app.get("*", (req, res) => {
       res.send("404 Page not found");
     });
 
-
-    app.listen(env.APP_PORT || 5000, ()=>{
-      console.log("server running")
+    // Start the server
+    const port = env.PORT || 3000;
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
     });
-    
   })
-  .catch((e) => console.log(e));
-
-
+  .catch((error) => {
+    console.error('Unable to connect to the database:', error);
+  });

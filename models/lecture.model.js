@@ -1,49 +1,45 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/db'); // Replace with your Sequelize connection
 
-// Define the lecture schema
-const lectureSchema = new mongoose.Schema({
+// Define the lecture model
+const Lecture = sequelize.define('Lecture', {
   title: {
-    type: String,
-    required: true
+    type: DataTypes.STRING,
+    allowNull: false
   },
   description: {
-    type: String,
-    required: true
+    type: DataTypes.STRING,
+    allowNull: false
   },
   date: {
-    type: Date,
-    required: true
+    type: DataTypes.DATE,
+    allowNull: false
   },
   startTime: {
-    type: String,
-    required: true
+    type: DataTypes.STRING,
+    allowNull: false
   },
   endTime: {
-    type: String,
-    required: true
-  },
-  lecturer: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    type: DataTypes.STRING,
+    allowNull: false
   },
   lecturerAttendanceIn: {
-    type: Date,
-    default: null
+    type: DataTypes.DATE,
+    defaultValue: null
   },
   lecturerAttendanceOut: {
-    type: Date,
-    default: null
+    type: DataTypes.DATE,
+    defaultValue: null
   },
   createdAt: {
-    type: Date,
-    default: Date.now
-  },
-
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW
+  }
 });
 
 
-// Create a Lecture model using the schema
-const Lecture = mongoose.model('Lecture', lectureSchema);
+Lecture.associate = models => {
+  Lecture.belongsTo(models.User, { foreignKey: 'lecturer' });
+};
 
 module.exports = Lecture;
